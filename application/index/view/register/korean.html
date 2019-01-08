@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BLC-책.</title>
+    <link href="/static/index/css/reset.css" rel="stylesheet" />
+    <link href="/static/index/css/login.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/index/font-awesome-4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="/static/admin/css/bootstrap.min.css">
+    <style>
+        .Icon{
+            float: left;
+            font-size: 22px;
+            line-height: 26px;
+            color:rgb(221, 161, 82);
+        }
+    </style>
+</head>
+<body  class="loginbox">
+<div >
+    <div class="logobox" style="position:relative">
+        <img src="/static/index/img/login_logo.png" />
+        <div class="btn-group" style="position:absolute; bottom:0px; right:8%; ">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" style="background: #8a6d3b;">
+                한글<span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" style="background: #8a6d3b;min-width: 80px">
+                <li><a href="{:url('index')}?id={$id}" style="color: #fff;">中文</a></li>
+                <li><a href="{:url('english')}?id={$id}" style="color: #fff;">English</a></li>
+            </ul>
+        </div>
+    </div>
+    <ul class="loginput">
+        <form name="form1" id="myform" autocomplete="off">
+            <li>
+                <i class="Icon fa fa-phone-square" ></i>
+                <input type="text" id="phone" name="account" placeholder="휴대폰 번호 입력해주세요." maxlength="11"/>
+            </li>
+            <li>
+                <i class="Icon fa fa-key" ></i>
+                <input type="password" id="pwd" name="login_pwd" placeholder="로그인 암호를 입력하십시오." maxlength="10"/>
+            </li>
+            <li>
+                <i class="Icon fa fa-key" ></i>
+                <input type="password" id="tpwd" name="pay_pwd" placeholder="비밀번호를 입력하십시오" maxlength="10" />
+            </li>
+            <li>
+                <i class="Icon fa fa-barcode" ></i>
+                <input type="text" id="invite" name="invite" value="{$id}" placeholder="초대장 입력해주세요." maxlength="11"/>
+            </li>
+        </form>
+    </ul>
+    <div class="loginput"  style="font-size: 14px">
+        <input type="checkbox" class="agreement" name="agreement" value="1"> <span style="color: #fff;">나는 이미 읽고 동의했다</span> <span onclick="window.location.href='/index/Article/agreement.html?state=1'"  style="color: rgb(221, 161, 82);">서비스 조항</span>
+    </div>
+
+    <a  href="javascript:void(0);" class="loginin tijiao"  >
+        즉시 등록하다.
+    </a>
+    <a  class="loginin dengdai" style="display: none" >
+        등록중......
+    </a>
+    <a  href="http://www.bibank.kr" class="nonumber" style="margin-bottom: 20px;">
+        등록됨?<label style="color:rgb(221, 161, 82);">App 다운로드</label>
+    </a>
+</div>
+<div class="tip03" >
+    <img src="/static/index/img/success.png" />
+    <span>
+			등록
+	</span>
+</div>
+
+<script type="application/javascript" src="/static/index/js/jquery.min.js"></script>
+<script type="application/javascript" src="/static/admin/js/bootstrap.min.js"></script>
+<script src="/static/admin/js/layer/layer.js"></script>
+<script src="/static/index/js/msg.js"></script>
+<script>
+    $('.tijiao').click(function(){
+        $('.tijiao').hide();
+        $('.dengdai').show();
+        var phone = $('#phone').val();
+        var pwd = $('#pwd').val();
+        var tpwd = $('#tpwd').val();
+        var invite = $('#invite').val();
+        var agreement = $('.agreement').is(":checked");
+       if(agreement != true){
+           layer.msg('읽기 및 동의 동의',{time:1200},function () {
+               $('.dengdai').hide();
+               $('.tijiao').show();
+           });
+       }else if(phone == '' || phone == null || phone == undefined){
+            layer.msg('휴대폰 번호 입력해주세요.',{time:1200},function () {
+                $('.dengdai').hide();
+                $('.tijiao').show();
+            });
+        }else if(pwd == '' || pwd == null || pwd == undefined){
+            layer.msg('로그인 암호를 입력하십시오.',{time:1200},function () {
+                $('.dengdai').hide();
+                $('.tijiao').show();
+            });
+        }else if(tpwd == '' || tpwd == null || tpwd == undefined){
+            layer.msg('비밀번호를 입력하십시오',{time:1200},function () {
+                $('.dengdai').hide();
+                $('.tijiao').show();
+            });
+        }else if(invite == '' || invite == null || invite == undefined){
+            layer.msg('초대장 입력해주세요.',{time:1200},function () {
+                $('.dengdai').hide();
+                $('.tijiao').show();
+            });
+        }else{
+            $.post("{:url('Register/foreign_register')}", $('#myform').serialize(),function(re){
+                if(re.code == 1011){
+                    layer.msg(re.msg,{time:1500},function(){
+                        window.location.href = "http://www.bibank.kr";
+                    });
+                }else{
+                    layer.msg(re.msg,{time:1500},function(){
+                        $('.dengdai').hide();
+                        $('.tijiao').show();
+                    });
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

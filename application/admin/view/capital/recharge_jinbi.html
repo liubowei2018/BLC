@@ -1,0 +1,181 @@
+{include file="public/header" /}
+<link rel="stylesheet" type="text/css" href="/static/admin/webupload/webuploader.css">
+<link rel="stylesheet" type="text/css" href="/static/admin/webupload/style.css">
+<style type="text/css">
+    /* TAB */
+    .nav-tabs.nav>li>a {
+        padding: 10px 25px;
+        margin-right: 0;
+    }
+    .nav-tabs.nav>li>a:hover,
+    .nav-tabs.nav>li.active>a {
+        border-top: 3px solid #1ab394;
+        padding-top: 8px;
+        border-bottom: 1px solid #FFFFFF;
+    }
+    .nav-tabs>li>a {
+        color: #A7B1C2;
+        font-weight: 500;
+        margin-right: 2px;
+        line-height: 1.42857143;
+        border: 1px solid transparent;
+        border-radius: 0;
+    }
+</style>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>充值配置</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="panel blank-panel">
+                        <div class="panel-heading">
+                            <div class="panel-options">
+                                <ul class="nav nav-tabs">
+                                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">金币网充值配置</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div id="tab-1" class="tab-pane active">
+                                    <form action="{:url('save')}" method="post" class="form-horizontal">
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">充值二维码：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="hidden" id="data_photo" name="config[recharge_jinbi_qrcode]" value="{$config.recharge_jinbi_qrcode}">
+                                                <div id="fileList" class="uploader-list" style="float:right"></div>
+                                                <div id="imgPicker" style="float:left">选择图片</div>
+                                                <img id="img_data"  height="80px" width="80px" style="float:left;margin-left: 50px;margin-top: -10px;" src="/uploads/face/{$config.recharge_jinbi_qrcode}" onerror="this.src='/static/admin/images/head_default.gif'"/>
+                                            </div>
+                                            <div class="col-sm-3 control-label">
+                                                <span class=" help-block m-b-none"><i class="fa fa-info-circle"></i> 用户充值可用 金币网二维码</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">充值钱包地址：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="text"  class="form-control" name="config[recharge_jinbi_money_path]" value="{$config.recharge_jinbi_money_path}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 用户充值可用 金币网钱包地址</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">可用：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="number"  class="form-control" name="config[recharge_jinbi_keyong]" value="{$config.recharge_jinbi_keyong}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 转换为可用的比例 /%</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">定期：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="number"  class="form-control" name="config[recharge_jinbi_dingqi]" value="{$config.recharge_jinbi_dingqi}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 转换为定期的比例 /%</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">增值：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="number"  class="form-control" name="config[recharge_jinbi_zengzhi]" value="{$config.recharge_jinbi_zengzhi}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 转换为增值的比例 /%</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">充值提示语：</label>
+                                            <div class="input-group col-sm-4">
+                                                <textarea class="form-control" type="text" rows="3" name="config[recharge_jinbi_info]">{$config.recharge_jinbi_info}</textarea>
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 多个用#号分隔，最多100字</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4 col-sm-offset-3">
+                                                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> 保存信息</button>&nbsp;&nbsp;&nbsp;
+                                                <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+<script type="text/javascript" src="/static/admin/webupload/webuploader.min.js"></script>
+<script type="text/javascript">
+
+    var config = {
+        '.chosen-select': {},
+    }
+    for (var selector in config) {
+        $(selector).chosen(config[selector]);
+    }
+
+    var $list = $('#fileList');
+    //上传图片,初始化WebUploader
+    var uploader = WebUploader.create({
+
+        auto: true,// 选完文件后，是否自动上传。
+        swf: '/static/admin/webupload/Uploader.swf',// swf文件路径
+        server: "{:url('Upload/uploadface')}",// 文件接收服务端。
+        duplicate :true,// 重复上传图片，true为可重复false为不可重复
+        pick: '#imgPicker',// 选择文件的按钮。可选。
+
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png'
+        },
+
+        'onUploadSuccess': function(file, data, response) {
+            $("#data_photo").val(data._raw);
+            $("#img_data").attr('src', '/uploads/face/' + data._raw).show();
+        }
+    });
+
+    uploader.on( 'fileQueued', function( file ) {
+        $list.html( '<div id="' + file.id + '" class="item">' +
+            '<h4 class="info">' + file.name + '</h4>' +
+            '<p class="state">正在上传...</p>' +
+            '</div>' );
+    });
+
+    // 文件上传成功
+    uploader.on( 'uploadSuccess', function( file ) {
+        $( '#'+file.id ).find('p.state').text('上传成功！');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploader.on( 'uploadError', function( file ) {
+        $( '#'+file.id ).find('p.state').text('上传出错!');
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+{include file="public/header" /}
+<style type="text/css">
+    /*elementUI分页样式*/
+    .layout-pagination {
+        text-align: right;
+        margin-top: 15px;
+    }
+    .table th {
+        text-align: center;
+    }
+    .table tr td {
+        text-align: center;
+    }
+</style>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <!-- Panel Other -->
+    <div class="ibox float-e-margins" id="app" v-cloak>
+        <div class="ibox-title">
+            <h5>定期列表</h5>
+        </div>
+        <div class="ibox-content">
+            <!--工具条-->
+            <el-form  class="demo-form-inline">
+                <el-form-item>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" v-model="key" placeholder="用户手机号或UUID" />
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" v-model="order_number" placeholder="查询订单号" />
+                        </div>
+                        <div class="col-md-2">
+                            <select name="state" id="state" v-model="state"  class="form-control">
+                                <option value="">查询类型</option>
+                                <option value="0">进行中</option>
+                                <option value="1">已完成</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" onclick="laydate()"  class="form-control layer-date"  v-model="stare_time" placeholder="开始时间" />
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" onclick="laydate()"  class="form-control layer-date"  v-model="end_time" placeholder="结束时间" />
+                        </div>
+                        <div class="col-md-1">
+                            <a type="button" class="btn btn-primary" @click="search"><i class="fa fa-search"></i> 搜索</a>
+                        </div>
+                    </div>
+
+                </el-form-item>
+            </el-form>
+            <div class="panel panel-default">
+                <table class="table">
+                    <th width="100px"></th><th>总订单</th><th>进行中</th><th>已完成 </th>
+                    <tr>
+                        <td>总单数</td>
+                        <td >{$count.state_all}</td>
+                        <td >{$count.state_0}</td>
+                        <td >{$count.state_1}</td>
+                    </tr>
+                    <tr>
+                        <td>总数量</td>
+                        <td >{$count.state_all_sum}</td>
+                        <td >{$count.state_0_sum}</td>
+                        <td >{$count.state_1_sum}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="example-wrap">
+                <div class="example" >
+
+                    <el-table :data="tableData" border highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中..." @selection-change="handleSelectionChange" style="width: 100%">
+                        <el-table-column prop="id" label="ID" width="80" align="center"></el-table-column>
+                        <el-table-column prop="order_number" label="单号"  show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="account" label="会员账号"  show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="nickname" label="姓名"  show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="number" label="买入数量" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="surplus" label="释放剩余数量" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="state" label="类型"  align="center">
+                            <template scope="scope">
+                                <span v-if="scope.row.state===0" style="color:#4cba12">进行中</span>
+                                <span v-else-if="scope.row.state==1" style="color:#FF4949">已完成</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="today"   label="执行天数" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="end_day"   label="截至天数" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="addtime"   label="创建时间" show-overflow-tooltip align="center"></el-table-column>
+                    </el-table>
+
+                    <div class="layout-pagination">
+                        <el-pagination
+                                @size-change="handleSizeChange"
+                                @current-change="handleCurrentChange"
+                                :current-page="currentPage"
+                                :page-sizes="[10, 20, 50, 100]"
+                                :page-size="pageSize"
+                                layout="total, sizes, prev, pager, next, jumper"
+                                :total="totalCount">
+                        </el-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{include file="public/footer" /}
+
+<script type="text/javascript">
+
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            imgPath: '/uploads/images/',
+            //表格当前页数据
+            tableData: [],
+            //多选数组
+            multipleSelection: [],
+            //搜索条件
+            key: '',
+            state:'',
+            order_number:'',
+            stare_time:'',
+            end_time:'',
+            //默认每页数据量
+            pageSize: 10,
+            //当前页码
+            currentPage: 1,
+            //默认数据总数
+            totalCount: 0,
+            //列表加载遮罩
+            listLoading: false
+        },
+        methods: {
+            //从服务器读取数据
+            loadData(key,currentPage,pageSize,state,order_number,stare_time,end_time){
+                vm.listLoading = true;
+                $.getJSON('{:url("regular_log")}', {key:key,stare_time:stare_time,end_time:end_time,state:state,order_number:order_number,page:currentPage,rows:pageSize}, function(data){
+                    vm.tableData = [];
+                    vm.totalCount = data.count;
+                    for(var i=0;i<data.list.length;i++){
+                        if(data.list[i]){
+                            vm.tableData.push(data.list[i]);
+                        }
+                    }
+                    vm.listLoading = false;
+
+                });
+            },
+            openMessage(type,message){
+                this.$message({
+                    type: type,
+                    duration: 1500,
+                    message: message
+                });
+            },
+            //每页显示数据量变更
+            handleSizeChange(val) {
+                this.pageSize = val;
+                this.loadData(this.key,this.currentPage, this.pageSize,this.state,this.order_number,this.stare_time,this.end_time);
+            },
+            //页码变更
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.loadData(this.key,this.currentPage, this.pageSize,this.state,this.order_number,this.stare_time,this.end_time);
+            },
+            //多选响应
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
+            //搜索
+            search(){
+                this.loadData(this.key,this.currentPage, this.pageSize,this.state,this.order_number,this.stare_time,this.end_time);
+                vm.listLoading = false;
+            },
+            //编辑
+            edit(row) {
+
+            },
+            //驳回
+            reject(row){
+                //询问框
+                layer.confirm('是否驳回充值申请？', {
+                    btn: ['确定','取消'] //按钮
+                }, function(){
+                    $.post("{:url('recharge_reject')}",{id:row.id},function (re) {
+                        if(re.code == 1011){
+                            layer.msg(re.msg,{time:1000},function () {
+                                window.location.reload();
+                            });
+                        }else{
+                            layer.msg(re.msg,{time:1500});
+                        }
+                    });
+                }, function(){
+                    layer.msg('已取消操作',{time:1500});
+                });
+            },
+            //批量删除
+            del() {
+                if(this.multipleSelection.length==0){
+                    vm.openMessage('warning','请选择至少一条数据进行删除！');
+                    return;
+                }
+                var array = [];
+                this.multipleSelection.forEach((row) => {
+                    array.push(row.id);
+                })
+
+                this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    $.ajax({
+                        url: '{:url("rescue/del_article")}',
+                        data:"id="+array,
+                        type: "POST",
+                        dataType:'json',
+                        success:function(res){
+                            if(res.code == 1){
+                                vm.openMessage('success',res.msg);
+                                vm.loadData(vm.key, vm.currentPage, vm.pageSize);
+                            }else{
+                                vm.openMessage('error',res.msg);
+                            }
+                        },
+                        error:function(er){
+
+                        }
+                    });
+                }).catch(() => {
+                    vm.openMessage('info','已取消删除');
+                });
+            }
+        }
+    })
+
+    //载入数据
+    vm.loadData(vm.key, vm.currentPage, vm.pageSize);
+
+</script>
+
+</body>
+</html>

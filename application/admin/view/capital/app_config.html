@@ -1,0 +1,263 @@
+{include file="public/header" /}
+<link rel="stylesheet" type="text/css" href="/static/admin/webupload/webuploader.css">
+<link rel="stylesheet" type="text/css" href="/static/admin/webupload/style.css">
+<style type="text/css">
+    /* TAB */
+    .nav-tabs.nav>li>a {
+        padding: 10px 25px;
+        margin-right: 0;
+    }
+    .nav-tabs.nav>li>a:hover,
+    .nav-tabs.nav>li.active>a {
+        border-top: 3px solid #1ab394;
+        padding-top: 8px;
+        border-bottom: 1px solid #FFFFFF;
+    }
+    .nav-tabs>li>a {
+        color: #A7B1C2;
+        font-weight: 500;
+        margin-right: 2px;
+        line-height: 1.42857143;
+        border: 1px solid transparent;
+        border-radius: 0;
+    }
+</style>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>网站配置</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="panel blank-panel">
+                        <div class="panel-heading">
+                            <div class="panel-options">
+                                <ul class="nav nav-tabs">
+                                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">登录配置</a></li>
+                                    <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">交易时间</a></li>
+                                    <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">交易提示</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div id="tab-1" class="tab-pane active">
+                                    <form action="{:url('save')}" method="post" class="form-horizontal">
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">app是否允许登录：</label>
+                                            <div class="input-group col-sm-4">
+                                                <div class="radio i-checks">
+                                                    <input type="radio" name='config[app_state]' value="1" {if condition="$config['app_state'] eq 1 "}checked{/if}/>开启&nbsp;&nbsp;
+                                                    <input type="radio" name='config[app_state]' value="0" {if condition="$config['app_state'] eq 0 "}checked{/if}/>关闭
+                                                </div>
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 关闭则禁止app端用户登录</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">是否允许注册：</label>
+                                            <div class="input-group col-sm-4">
+                                                <div class="radio i-checks">
+                                                    <input type="radio" name='config[register_state]' value="1" {if condition="$config['register_state'] eq 1 "}checked{/if}/>开启&nbsp;&nbsp;
+                                                    <input type="radio" name='config[register_state]' value="0" {if condition="$config['register_state'] eq 0 "}checked{/if}/>关闭
+                                                </div>
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 关闭则不能在客户端注册</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">短信是否使用：</label>
+                                            <div class="input-group col-sm-4">
+                                                <div class="radio i-checks">
+                                                    <input type="radio" name='config[sms_state]' value="1" {if condition="$config['sms_state'] eq 1 "}checked{/if}/>开启&nbsp;&nbsp;
+                                                    <input type="radio" name='config[sms_state]' value="0" {if condition="$config['sms_state'] eq 0 "}checked{/if}/>关闭
+                                                </div>
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 客户端短信是否发送，如不发送默认为123456</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4 col-sm-offset-3">
+                                                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> 保存信息</button>&nbsp;&nbsp;&nbsp;
+                                                <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="tab-2" class="tab-pane">
+                                    <form action="{:url('save')}" method="post" class="form-horizontal">
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">充值提现时间 开始：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="time"  class="form-control" name="config[circulation_start_time]" value="{$config.circulation_start_time}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 允许充值提现的时间</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">充值提现时间 结束：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="time"  class="form-control" name="config[circulation_end_time]" value="{$config.circulation_end_time}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 允许充值提现的时间</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">交易开始时间：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="time" min="0" class="form-control" name="config[start_time]" value="{$config.start_time}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 允许定期/可用/提速 交易的时间</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">交易结束时间：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="time" min="0" class="form-control" name="config[end_time]" value="{$config.end_time}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 允许定期/可用/提速 交易的时间</span>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4 col-sm-offset-3">
+                                                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> 保存信息</button>&nbsp;&nbsp;&nbsp;
+                                                <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="tab-3" class="tab-pane">
+                                    <form action="{:url('save')}" method="post" class="form-horizontal">
+
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">转账提示语：</label>
+                                            <div class="input-group col-sm-4">
+                                                <textarea class="form-control" type="text" rows="3" name="config[tips_sellout]">{$config.tips_sellout}</textarea>
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 多个用#号分隔，最多100字</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">提现提示语：</label>
+                                            <div class="input-group col-sm-4">
+                                                <textarea class="form-control" type="text" rows="3" name="config[tips_propose]">{$config.tips_propose}</textarea>
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 多个用#号分隔，最多100字</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">互转提示语：</label>
+                                            <div class="input-group col-sm-4">
+                                                <textarea class="form-control" type="text" rows="3" name="config[tips_interturn]">{$config.tips_interturn}</textarea>
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 多个用#号分隔，最多100字</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">转入定期提示语：</label>
+                                            <div class="input-group col-sm-4">
+                                                <textarea class="form-control" type="text" rows="3" name="config[tips_regular]">{$config.tips_regular}</textarea>
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 多个用#号分隔，最多100字</span>
+                                            </div>
+                                        </div>
+                                         <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">身份认证提示语：</label>
+                                            <div class="input-group col-sm-4">
+                                                <textarea class="form-control" type="text" rows="3" name="config[identity_auth]">{$config.identity_auth}</textarea>
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 多个用#号分隔，最多100字</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4 col-sm-offset-3">
+                                                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> 保存信息</button>&nbsp;&nbsp;&nbsp;
+                                                <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+<script type="text/javascript" src="/static/admin/webupload/webuploader.min.js"></script>
+<script type="text/javascript">
+
+    var config = {
+        '.chosen-select': {},
+    }
+    for (var selector in config) {
+        $(selector).chosen(config[selector]);
+    }
+
+    var $list = $('#fileList');
+    //上传图片,初始化WebUploader
+    var uploader = WebUploader.create({
+
+        auto: true,// 选完文件后，是否自动上传。
+        swf: '/static/admin/webupload/Uploader.swf',// swf文件路径
+        server: "{:url('Upload/uploadface')}",// 文件接收服务端。
+        duplicate :true,// 重复上传图片，true为可重复false为不可重复
+        pick: '#imgPicker',// 选择文件的按钮。可选。
+
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png'
+        },
+
+        'onUploadSuccess': function(file, data, response) {
+            $("#data_photo").val(data._raw);
+            $("#img_data").attr('src', '/uploads/face/' + data._raw).show();
+        }
+    });
+
+    uploader.on( 'fileQueued', function( file ) {
+        $list.html( '<div id="' + file.id + '" class="item">' +
+            '<h4 class="info">' + file.name + '</h4>' +
+            '<p class="state">正在上传...</p>' +
+            '</div>' );
+    });
+
+    // 文件上传成功
+    uploader.on( 'uploadSuccess', function( file ) {
+        $( '#'+file.id ).find('p.state').text('上传成功！');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploader.on( 'uploadError', function( file ) {
+        $( '#'+file.id ).find('p.state').text('上传出错!');
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+{include file="public/header" /}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>用户身份认证</h5>
+        </div>
+        <div class="ibox-content">
+            <div class="row">
+                <form action="{:url('authentication')}" method="get">
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" name="account" value="{$account}"  placeholder="用户手机号或姓名" />
+                    </div>
+                    <div class="col-md-1">
+                        <select name="state" id="state"   class="form-control">
+                            <option value="">审核状态</option>
+                            <option value="1" {if condition = "$state == 1"} selected{/if}>未审核</option>
+                            <option value="2" {if condition = "$state == 1"} selected{/if}>已审核</option>
+                            <option value="3" {if condition = "$state == 1"} selected{/if}>已驳回</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" onclick="laydate()" name="stare_time" value="{$stare_time}" class="form-control layer-date"   placeholder="开始时间" />
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" onclick="laydate()" name="end_time"  value="{$end_time}" class="form-control layer-date"   placeholder="结束时间" />
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-primary" ><i class="fa fa-search"></i> 搜索</button>
+                    </div>
+                </form>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <div class="example-wrap">
+                <div class="example">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                        <tr class="long-tr">
+                            <th>uuid</th>
+                            <th>账号</th>
+                            <th>姓名</th>
+                            <th>身份证号</th>
+                            <th>身份证（正面）</th>
+                            <th>身份证（反面）</th>
+                            <th>审核状态</th>
+                            <th>申请时间</th>
+                            <th width="20%">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {foreach name="info" item="vo"}
+                        <tr class="long-td">
+                            <td>{$vo.uuid}</td>
+                            <td>{$vo.account}</td>
+                            <td>{$vo.name}</td>
+                            <td>{$vo.idcard}</td>
+                            <td><img src="/uploads/user/{$vo.just_card}" onclick="sel_img('{$vo.just_card}')" alt="" width="100px" height="100px"></td>
+                            <td><img src="/uploads/user/{$vo.back_card}" onclick="sel_img('{$vo.back_card}')" alt="" width="100px" height="100px"></td>
+                            <td>
+                                {switch name="$vo.state"}
+                                {case value="1"}未审核{/case}
+                                {case value="2"}已审核{/case}
+                                {case value="3"}已驳回{/case}
+                                {/switch}
+                            </td>
+                            <td>{$vo.add_time|date="Y-m-d H:i:s",###}</td>
+                            <td>
+                                {if condition="$vo.state == 1"}
+                                <a href="javascript:;" class="btn btn-primary btn-xs btn-outline confirm" data-id="{$vo.id}">
+                                    <i class="fa fa-paste"></i> 确认审核</a>&nbsp;&nbsp;
+                                <a href="javascript:;"  class="btn btn-danger btn-xs btn-outline reject" data-id="{$vo.id}">
+                                    <i class="fa fa-trash-o"></i> 驳回申请</a>
+                                {/if}
+                            </td>
+                        </tr>
+                        {/foreach}
+                        </tbody>
+                    </table>
+                    <div id="Pages" style="text-align:right;"></div><div id="allpage" style=" text-align: right;"></div>
+                </div>
+                {$page}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{include file="public/footer" /}
+<script type="text/javascript">
+    function sel_img(path) {
+        var img_url = '/uploads/user/'+path;
+        layer.open({
+            type: 1,
+            title:'身份认证查看',
+            skin: 'layui-layer-demo', //样式类名
+            closeBtn: 0, //不显示关闭按钮
+            anim: 2,
+            shadeClose: true, //开启遮罩关闭
+            content: '<img src="'+img_url+'" style="max-width: 400px">'
+        });
+    }
+    //确认
+    $('.confirm').click(function () {
+        var id = $(this).attr('data-id');
+        layer.confirm('是否确认用户实名认证？', {
+            btn: ['确认','取消'] //按钮
+        }, function(){
+            $.post("{:url('confirm_authentication')}",{id:id},function (re) {
+                if(re.code == 1011){
+                    layer.msg(re.msg,{time:1500},function () {
+                        window.location.reload();
+                    });
+                }else{
+                    layer.msg(re.msg,{time:1500});
+                }
+            });
+        }, function(){
+            layer.msg('已取消操作', {icon: 1});
+        });
+    });
+    //驳回
+    $('.reject').click(function () {
+        var id = $(this).attr('data-id');
+        layer.open({
+            type: 1,
+            title:'驳回用户申请',
+            skin: 'layui-layer-rim', //加上边框
+            area: ['420px', '240px'], //宽高
+            content: '<textarea style="width: 98%;height: 80%;margin: 1%" id="info_detail"> </textarea>',
+            btn: ['确认','取消'], //按钮
+            scrollbar:false,
+            yes: function () {
+              var info = $('#info_detail').val();
+              $.post("{:url('reject_authentication')}",{id:id,info:info},function (re) {
+                  if(re.code == 1011){
+                      layer.msg(re.msg,{time:1500},function () {
+                          window.location.reload();
+                      });
+                  }else{
+                      layer.msg(re.msg,{time:1500});
+                  }
+              });
+            },
+            btn2:function () {
+                layer.msg('已取消操作', {time: 1500});
+            }
+        });
+    });
+</script>
+</body>
+</html>

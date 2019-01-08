@@ -1,0 +1,68 @@
+{include file="public/header" /}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>编辑银行卡记录</h5>
+        </div>
+        <div class="ibox-content">
+            <div class="row">
+                <form action="{:url('edit_member_log')}" method="get">
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" name="account" value="{$account}"  placeholder="请输入会员账号" />
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" onclick="laydate()" name="stare_time" value="{$stare_time}" class="form-control layer-date"   placeholder="开始时间" />
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" onclick="laydate()" name="end_time"  value="{$end_time}" class="form-control layer-date"   placeholder="结束时间" />
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-primary" ><i class="fa fa-search"></i> 搜索</button>
+                    </div>
+                </form>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <div class="example-wrap">
+                <div class="example">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                        <tr class="long-tr">
+                            <th>会员账号</th>
+                            <th>原始姓名</th>
+                            <th>原始身份证号</th>
+                            <th>新姓名</th>
+                            <th>新身份证号</th>
+                            <th>操作人员</th>
+                            <th>操作时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {foreach name="lists" item="vo"}
+                        <tr class="long-td">
+                            <td>{$vo.account}</td>
+                            <td>{$vo.old_name}</td>
+                            <td>{$vo.old_idcard}</td>
+                            <td>{$vo.new_name}</td>
+                            <td>{$vo.new_idcard}</td>
+                            <td>{$vo.admin_name}</td>
+                            <td>{$vo.add_time|date="Y-m-d H:i:s",###}</td>
+                        </tr>
+                        {/foreach}
+                        </tbody>
+                    </table>
+                    <div id="Pages" style="text-align:right;"></div><div id="allpage" style=" text-align: right;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{include file="public/footer" /}
+
+
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

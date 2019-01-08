@@ -1,0 +1,256 @@
+{include file="public/header" /}
+<link rel="stylesheet" type="text/css" href="/static/admin/webupload/webuploader.css">
+<link rel="stylesheet" type="text/css" href="/static/admin/webupload/style.css">
+<style type="text/css">
+    /* TAB */
+    .nav-tabs.nav>li>a {
+        padding: 10px 25px;
+        margin-right: 0;
+    }
+    .nav-tabs.nav>li>a:hover,
+    .nav-tabs.nav>li.active>a {
+        border-top: 3px solid #1ab394;
+        padding-top: 8px;
+        border-bottom: 1px solid #FFFFFF;
+    }
+    .nav-tabs>li>a {
+        color: #A7B1C2;
+        font-weight: 500;
+        margin-right: 2px;
+        line-height: 1.42857143;
+        border: 1px solid transparent;
+        border-radius: 0;
+    }
+</style>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>网站配置</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="panel blank-panel">
+                        <div class="panel-heading">
+                            <div class="panel-options">
+                                <ul class="nav nav-tabs">
+                                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">可用值</a></li>
+                                    <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">活期值</a></li>
+                                    <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">激活配置</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div id="tab-1" class="tab-pane active">
+                                    <form action="{:url('save')}" method="post" class="form-horizontal">
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">提现数量：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="number" min="0" class="form-control" name="config[min_propose]" value="{$config.min_propose}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 提现可用最低值</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">提现手续费：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="text" min="0" class="form-control" name="config[poundage_propose]" value="{$config.poundage_propose}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 提现可用的手续费 /%</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">可用转提速：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="text" min="0" class="form-control" name="config[turn_current]" value="{$config.turn_current}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 可用值转提速值比例 /%</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">买入最低值：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="text" min="0" class="form-control" name="config[turn_keyong]" value="{$config.turn_keyong}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 可用买入定期和增值最小值 </span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">定期最大值：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="text" min="0" class="form-control" name="config[regular_max_num]" value="{$config.regular_max_num}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 允许持有定期最大值 </span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">可用转定期：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="text" min="0" class="form-control" name="config[turn_regular]" value="{$config.turn_regular}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 可用值转定期比例 /%</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">可用转增值：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="text" min="0" class="form-control" name="config[turn_increment]" value="{$config.turn_increment}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 可用值转增值比例 /%</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">用户转账手续费：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="text" min="0" class="form-control" name="config[poundage_sellout]" value="{$config.poundage_sellout}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 会员之间转账的手续费 /%</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4 col-sm-offset-3">
+                                                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> 保存信息</button>&nbsp;&nbsp;&nbsp;
+                                                <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="tab-2" class="tab-pane">
+                                    <form action="{:url('save')}" method="post" class="form-horizontal">
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">最低释放值：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="number" min="0" class="form-control" name="config[min_release]" value="{$config.min_release}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 定期小于这个值停止释放</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">自身加速：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="number" min="0" class="form-control" name="config[static_bonus]" value="{$config.static_bonus}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 提速值释放定期/增值 比例 /%</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">提速与定期比例：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="number" min="0" class="form-control" name="config[conversion_ratio]" value="{$config.conversion_ratio}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 提速值与定期的倍数比</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4 col-sm-offset-3">
+                                                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> 保存信息</button>&nbsp;&nbsp;&nbsp;
+                                                <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="tab-3" class="tab-pane">
+                                    <form action="{:url('save')}" method="post" class="form-horizontal">
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">激活会员：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="number" min="0" class="form-control" name="config[active_member]" value="{$config.active_member}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 单笔定期/提速满足当前 激活账号</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">激活团队：</label>
+                                            <div class="input-group col-sm-4">
+                                                <input type="number" min="0" class="form-control" name="config[active_team]" value="{$config.active_team}">
+                                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 单笔充值定期满足 激活团队收益</span>
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed"></div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4 col-sm-offset-3">
+                                                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> 保存信息</button>&nbsp;&nbsp;&nbsp;
+                                                <a class="btn btn-danger" href="javascript:history.go(-1);"><i class="fa fa-close"></i> 返回</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+<script type="text/javascript" src="/static/admin/webupload/webuploader.min.js"></script>
+<script type="text/javascript">
+
+    var config = {
+        '.chosen-select': {},
+    }
+    for (var selector in config) {
+        $(selector).chosen(config[selector]);
+    }
+
+    var $list = $('#fileList');
+    //上传图片,初始化WebUploader
+    var uploader = WebUploader.create({
+
+        auto: true,// 选完文件后，是否自动上传。
+        swf: '/static/admin/webupload/Uploader.swf',// swf文件路径
+        server: "{:url('Upload/uploadface')}",// 文件接收服务端。
+        duplicate :true,// 重复上传图片，true为可重复false为不可重复
+        pick: '#imgPicker',// 选择文件的按钮。可选。
+
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png'
+        },
+
+        'onUploadSuccess': function(file, data, response) {
+            $("#data_photo").val(data._raw);
+            $("#img_data").attr('src', '/uploads/face/' + data._raw).show();
+        }
+    });
+
+    uploader.on( 'fileQueued', function( file ) {
+        $list.html( '<div id="' + file.id + '" class="item">' +
+            '<h4 class="info">' + file.name + '</h4>' +
+            '<p class="state">正在上传...</p>' +
+            '</div>' );
+    });
+
+    // 文件上传成功
+    uploader.on( 'uploadSuccess', function( file ) {
+        $( '#'+file.id ).find('p.state').text('上传成功！');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploader.on( 'uploadError', function( file ) {
+        $( '#'+file.id ).find('p.state').text('上传出错!');
+    });
+
+</script>
+</body>
+</html>

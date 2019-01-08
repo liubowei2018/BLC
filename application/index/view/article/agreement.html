@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>详情</title>
+</head>
+<link href="/static/index/css/css.css" rel="stylesheet" type="text/css" />
+<link href="/static/index/font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+<style>
+    .img{width:100%}
+    .detail{
+        padding: 15px 6px;
+    }
+    .return{
+        width: 100%;
+        height: 48px;
+        background: rgb(221, 161, 82);
+        text-align: center;
+    }
+    .return
+</style>
+
+
+<body style="background: #fff;">
+{if condition="$state == 1"}
+<div class="return">
+    <span style="float: left ;"><img src="/static/index/img/fanhui.png" alt="" style="width: 25px; margin: 13px 0 0 13px;" onclick="javascript:history.go(-1)"></span>
+    <span style="color: #fff;font-size: 20px;line-height: 48px;"> 服 务 协 议</span>
+</div>
+{/if}
+<div class="detail">
+    {$info.content}
+</div>
+
+</table>
+
+</body>
+</html>

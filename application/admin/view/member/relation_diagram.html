@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+    <TITLE> ZTREE DEMO - Async</TITLE>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link href="/static/admin/css/style.min.css?v=3.3.6" rel="stylesheet">
+    <link href="/static/admin/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link rel="stylesheet" href="/common/ztree/css/demo.css" type="text/css">
+    <link rel="stylesheet" href="/common/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+</HEAD>
+
+<BODY style="padding: 10px">
+<h1>会员关系树</h1>
+            <div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="col-sm-2">
+                            <div class="input-group">
+                                 <input type="text" name="pid" id="pid" value="{$account}"  class="form-control"  placeholder="查询的手机号或用户昵称">
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <div class="input-group">
+                                <input type="button" id="query" value="查询"  class="btn btn-primary">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {if condition = "!empty($account)"}
+            <div class="hr-line-dashed"></div>
+            <div class="example-wrap">
+                  <div class="example">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                               <tr class="long-td">
+                                <td>{$str}</td>
+                               </tr>
+                        </thead>
+                    </table>
+                  </div>
+            </div>
+        {/if}
+<div class="content_wrap" style="margin:0 auto;">
+    <div class="zTreeDemoBackground left">
+        <ul id="treeDemo" class="ztree"></ul>
+    </div>
+</div>
+
+</BODY>
+<script type="text/javascript" src="/common/ztree/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="/common/ztree/js/jquery.ztree.core.js"></script>
+<!--  <script type="text/javascript" src="../../../js/jquery.ztree.excheck.js"></script>
+  <script type="text/javascript" src="../../../js/jquery.ztree.exedit.js"></script>-->
+<SCRIPT type="text/javascript">
+    <!--
+    var setting = {
+        async: {
+            enable: true,
+            url:"{:url('member/relation_diagram_list')}",
+            autoParam:["id", "name=n", "level=lv"],
+            otherParam:{"pid":"{$id}"},
+            dataFilter: filter
+        }
+    };
+
+    function filter(treeId, parentNode, childNodes) {
+        if (!childNodes) return null;
+        /*            for (var i=0, l=childNodes.length; i<l; i++) {
+         childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+         }*/
+        return childNodes;
+    }
+
+    $(document).ready(function(){
+        var state= "{$state}";
+        if(state == 'ok'){
+            $.fn.zTree.init($("#treeDemo"), setting);
+        }else{
+            $("#treeDemo").append('<h3>没有查询到信息</h3>');
+        }
+    });
+    //-->
+</SCRIPT>
+<script>
+    $('#query').click(function(){
+        $('#treeDemo').empty();
+        var pid = $('#pid').val();
+        window.location.href = "{:url('member/relation_diagram')}?account="+pid+"";
+    });
+</script>
+</HTML>

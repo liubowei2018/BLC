@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BLC-注册</title>
+    <link href="/static/index/css/reset.css" rel="stylesheet" />
+    <link href="/static/index/css/login.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/index/font-awesome-4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="/static/admin/css/bootstrap.min.css">
+    <style>
+        .Icon{
+            float: left;
+            font-size: 22px;
+            line-height: 26px;
+            color:rgb(221, 161, 82);
+        }
+    </style>
+</head>
+<body  class="loginbox">
+<div >
+    <div class="logobox" style="position:relative">
+        <img src="/static/index/img/login_logo.png" />
+        <div class="btn-group" style="position:absolute; bottom:0px; right:8%; ">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" style="background: #8a6d3b;">
+                中文 <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" style="background: #8a6d3b;min-width: 80px">
+                <li><a href="{:url('english')}?id={$id}" style="color: #fff;">English</a></li>
+                <li><a href="{:url('korean')}?id={$id}" style="color: #fff;">한글</a></li>
+            </ul>
+        </div>
+    </div>
+    <ul class="loginput">
+        <form name="form1" id="myform" autocomplete="off">
+            <li>
+                <i class="Icon fa fa-phone-square" ></i>
+                <input type="text" id="phone" name="account" placeholder="请输入手机号" maxlength="11"/>
+            </li>
+            <li>
+                <i class="Icon fa fa-key" ></i>
+                <input type="password" id="psw" name="login_pwd" placeholder="请输入登录密码" maxlength="10"/>
+            </li>
+            <li>
+                <i class="Icon fa fa-key" ></i>
+                <input type="password" id="tpsw" name="pay_pwd" placeholder="请输入支付密码" maxlength="10" />
+            </li>
+            <li>
+                <i class="Icon fa fa-commenting" ></i>
+                <input type="text" id="verify_code"  name="verify_code" placeholder="输入验证码" maxlength="6" style="width: 120px"/>
+                <div class="get">
+                    <span><input type="button" id="J_getCode" value="获取验证码" onclick="getCode(this)" style="width: calc(100% - 160px);float:  right;text-align:  right;" /></span>
+                    <button  id="J_resetCode" type="button" style="display:none;background: none;border: none;color: #fff;text-align: right;"><span id="J_second">60</span>秒后重发</button>
+                </div>
+            </li>
+            <li>
+                <i class="Icon fa fa-barcode" ></i>
+                <input type="text" id="invite" name="invite" value="{$id}" placeholder="请输入邀请码" maxlength="11"/>
+            </li>
+        </form>
+    </ul>
+    <div class="loginput"  style="font-size: 14px">
+        <input type="checkbox" class="agreement" name="agreement" value="1"> <span style="color: #fff;">我已阅读并同意</span> <span onclick="window.location.href='/index/Article/agreement.html?state=1'" style="color: rgb(221, 161, 82);" >服务条款</span>
+    </div>
+
+    <a  href="javascript:void(0);" class="loginin tijiao"  >
+        立即注册
+    </a>
+    <a  class="loginin dengdai" style="display: none" >
+        注册中。。。
+    </a>
+    <a  href="http://www.bibank.kr" class="nonumber" style="margin-bottom: 20px;">
+        我有账号？<label style="color:rgb(221, 161, 82);">下载APP</label>
+    </a>
+</div>
+<div class="tip03" >
+    <img src="/static/index/img/success.png" />
+    <span>
+				注册成功
+			</span>
+</div>
+
+<script type="application/javascript" src="/static/index/js/jquery.min.js"></script>
+<script type="application/javascript" src="/static/admin/js/bootstrap.min.js"></script>
+<script src="/static/admin/js/layer/layer.js"></script>
+<script src="/static/index/js/msg.js"></script>
+<script>
+    $('.tijiao').click(function(){
+        $('.tijiao').hide();
+        $('.dengdai').show();
+        var agreement = $('.agreement').is(":checked");
+        if(agreement != true){
+            layer.msg('请阅读并同意协议',{time:1200},function () {
+                $('.dengdai').hide();
+                $('.tijiao').show();
+            });
+        }else{
+            $.post("{:url('Register/register')}", $('#myform').serialize(),function(re){
+                if(re.code == 1011){
+                    layer.msg(re.msg,{time:1500},function(){
+                        window.location.href = "http://www.bibank.kr";
+                    });
+                }else{
+                    layer.msg(re.msg,{time:1500},function(){
+                        $('.dengdai').hide();
+                        $('.tijiao').show();
+                    });
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
