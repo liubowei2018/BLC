@@ -122,9 +122,6 @@ class Usermoney extends Base
         if($user_detail['abc_coin'] < $data['number'])  return json(['code'=>1012,'msg'=>'可用金额不足','data'=>[]]);
         $ConfigCapital = ConfigCapital();
         if($data['number'] < $ConfigCapital['turn_keyong']) return json(['code'=>1012,'msg'=>'买入不能低于'.$ConfigCapital['turn_keyong'],'data'=>[]]);
-        //扣款
-        $money_resulr = $MoneyModel->getModifyMoney($data['uuid'],3,2,$data['number'],'可用买入定期/增值','',3);
-        if($money_resulr['code'] != 1011) return json($money_resulr);
         $MoneyRegular = new MoneyRegular();//添加定期记录
         //根据比例算定期
         if($ConfigCapital['turn_regular'] > 0){
@@ -137,6 +134,10 @@ class Usermoney extends Base
         if($ConfigCapital['turn_increment'] > 0){
             $increment_number = $data['number']*$ConfigCapital['turn_increment']/100;
         }
+
+        //扣款
+        $money_resulr = $MoneyModel->getModifyMoney($data['uuid'],3,2,$data['number'],'可用买入定期/增值','',3);
+        if($money_resulr['code'] != 1011) return json($money_resulr);
 
         Db::startTrans();
         try{
@@ -227,8 +228,15 @@ class Usermoney extends Base
                 if($two_count >= $config['directpush_number']){
                     $two_release = $money*$config['directpush_bonus']/100;
                     $MoneyModel->getModifyMoney($two_user['uuid'],4,1,$two_release,'直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
-
+                }else{
+                    // 不符合条件的进入 直接冻结
+                    $two_release = $money*$config['directpush_bonus']/100;
+                    $MoneyModel->getModifyMoney($two_user['uuid'],5,1,$two_release,'（冻结）直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
                 }
+            }else{
+                // 不符合条件的进入 直接冻结
+                $two_release = $money*$config['directpush_bonus']/100;
+                $MoneyModel->getModifyMoney($two_user['uuid'],5,1,$two_release,'（冻结）直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
             }
             //二代
             if($two_user && $two_user['pid'] > 0){
@@ -239,8 +247,13 @@ class Usermoney extends Base
                     if($three_count >= $config['indirect_number']){
                         $three_release = $money * $config['indirect_bonus']/100;
                         $MoneyModel->getModifyMoney($three_user['uuid'],4,1,$three_release,'直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
-
+                    }else{
+                        $three_release = $money * $config['indirect_bonus']/100;
+                        $MoneyModel->getModifyMoney($three_user['uuid'],7,1,$three_release,'（冻结）直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
                     }
+                }else{
+                    $three_release = $money * $config['indirect_bonus']/100;
+                    $MoneyModel->getModifyMoney($three_user['uuid'],7,1,$three_release,'（冻结）直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
                 }
             }
         }
