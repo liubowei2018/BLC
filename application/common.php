@@ -279,6 +279,7 @@ function getSign($arr)
     //http_build_query()中文自动转码需要处理下
     $str1 = http_build_query($arr);
     $str1 = urldecode($str1).'&key='.$key;
+    dump($str1);
     return  md5($str1);
 }
 //URL解码为中文

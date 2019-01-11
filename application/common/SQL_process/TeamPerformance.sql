@@ -13,6 +13,8 @@ DECLARE user_activation int(11);
 ## 查询配置信息
 DECLARE user_count INT (11);
 DECLARE config_team_direct_push INT(11);
+## 用户资金
+DECLARE user_freeze_yeji NUMERIC (12,2);
 ## 查询用户是否存在
 SET user_number = 1;
 SELECT pid INTO user_pid FROM think_member WHERE id = member_id;
@@ -24,13 +26,15 @@ WHILE user_pid <> 0 DO
   ##增加团队业绩和今日业绩  直推够  团队激活  实名认证 账号未冻结 第三轮进行增加 今日团队奖
    IF user_number > 2  AND user_count >= config_team_direct_push AND user_team_state = 1 AND user_is_proving = 1 THEN
    ##符合条件的增加到今日团队释放
-          UPDATE think_money SET today_team_money = today_team_money + member_money WHERE uuid = user_uuid;
+          UPDATE think_money SET today_team_money = today_team_money + member_money+freeze_team,freeze_team=0 WHERE uuid = user_uuid;
    ELSE
-
+          UPDATE think_money SET freeze_team = freeze_team + member_money WHERE uuid = user_uuid;
    END IF;
    ## 添加团队业绩 如果不满足条件
    IF  user_count >= config_team_direct_push AND user_team_state = 1 AND user_is_proving = 1 THEN
-        UPDATE think_member SET team_money = team_money + member_money WHERE id = user_id;
+        SELECT freeze_yeji INTO user_freeze_yeji FROM think_money WHERE uuid = user_uuid;
+        UPDATE think_member SET team_money = team_money + member_money + freeze_yeji WHERE id = user_id;
+        UPDATE think_money SET freeze_yeji = 0 WHERE uuid = user_uuid;
    ELSE
         UPDATE think_money SET freeze_yeji = freeze_yeji + member_money WHERE uuid = user_uuid;
    END IF;

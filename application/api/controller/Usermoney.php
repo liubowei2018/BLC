@@ -231,12 +231,12 @@ class Usermoney extends Base
                 }else{
                     // 不符合条件的进入 直接冻结
                     $two_release = $money*$config['directpush_bonus']/100;
-                    $MoneyModel->getModifyMoney($two_user['uuid'],5,1,$two_release,'（冻结）直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
+                    $MoneyModel->getModifyMoney($two_user['uuid'],6,1,$two_release,'（冻结）直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
                 }
             }else{
                 // 不符合条件的进入 直接冻结
                 $two_release = $money*$config['directpush_bonus']/100;
-                $MoneyModel->getModifyMoney($two_user['uuid'],5,1,$two_release,'（冻结）直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
+                $MoneyModel->getModifyMoney($two_user['uuid'],6,1,$two_release,'（冻结）直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
             }
             //二代
             if($two_user && $two_user['pid'] > 0){
@@ -246,14 +246,14 @@ class Usermoney extends Base
                     $three_count = Db::name('member')->where(['pid'=>$three_user['id'],'is_proving'=>1,'activation'=>1])->count();
                     if($three_count >= $config['indirect_number']){
                         $three_release = $money * $config['indirect_bonus']/100;
-                        $MoneyModel->getModifyMoney($three_user['uuid'],4,1,$three_release,'直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
+                        $MoneyModel->getModifyMoney($three_user['uuid'],4,1,$three_release,'间接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
                     }else{
                         $three_release = $money * $config['indirect_bonus']/100;
-                        $MoneyModel->getModifyMoney($three_user['uuid'],7,1,$three_release,'（冻结）直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
+                        $MoneyModel->getModifyMoney($three_user['uuid'],7,1,$three_release,'（冻结）间接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
                     }
                 }else{
                     $three_release = $money * $config['indirect_bonus']/100;
-                    $MoneyModel->getModifyMoney($three_user['uuid'],7,1,$three_release,'（冻结）直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
+                    $MoneyModel->getModifyMoney($three_user['uuid'],7,1,$three_release,'（冻结）间接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
                 }
             }
         }

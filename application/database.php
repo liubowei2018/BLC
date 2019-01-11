@@ -4,7 +4,7 @@ return [
     
     'type'           => 'mysql',	     // 数据库类型   
     'hostname'       => '127.0.0.1',     // 服务器地址   
-    'database'       => 'blc_new',    // 数据库名
+    'database'       => 'blc0108',    // 数据库名
     'username'       => 'root',	         // 用户名  
     'password'       => 'root',	         // 密码
     'hostport'       => '3306',	         // 端口
