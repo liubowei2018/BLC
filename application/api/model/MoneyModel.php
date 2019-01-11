@@ -112,6 +112,36 @@ class MoneyModel extends Model
                         }
                     }
                     break;
+                case 6://直接冻结  frozen_push
+                    $original = $user_money['frozen_push'];
+                    if($state==1){//增加
+                        $str = '增加直接冻结成功';
+                        $this->where('uuid',$uuid)->setInc('frozen_push',$number);
+                    }elseif($state==2){//减少
+                        $str = '减少直接冻结成功';
+                        $this->where('uuid',$uuid)->setDec('frozen_push',$number);
+                        $money_number = $this->where('uuid',$uuid)->value('frozen_push');
+                        if($money_number < 0){
+                            $this->rollback();
+                            return ['code'=>1012,'mag'=>'直接冻结不足','data'=>''];
+                        }
+                    }
+                    break;
+                case 7://间接冻结   frozen_indirect
+                    $original = $user_money['frozen_indirect'];
+                    if($state==1){//增加
+                        $str = '增加间接冻结成功';
+                        $this->where('uuid',$uuid)->setInc('frozen_indirect',$number);
+                    }elseif($state==2){//减少
+                        $str = '减少间接冻结成功';
+                        $this->where('uuid',$uuid)->setDec('frozen_indirect',$number);
+                        $money_number = $this->where('uuid',$uuid)->value('frozen_indirect');
+                        if($money_number < 0){
+                            $this->rollback();
+                            return ['code'=>1012,'mag'=>'间接冻结不足','data'=>''];
+                        }
+                    }
+                    break;
             }
             $money_log = [
                 'uuid'=>$uuid,
