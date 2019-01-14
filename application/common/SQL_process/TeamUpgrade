@@ -1,0 +1,76 @@
+CREATE PROCEDURE TeamUpgrade(user_id INT(11),user_grade INT (11))
+BEGIN
+## 用户升级 只添加人数id
+DECLARE user_mid INT (11);
+DECLARE user_pid INT (11);
+DECLARE user_team VARCHAR (255);
+DECLARE is_error INT (11);
+SET is_error = 1;
+    SELECT pid INTO user_pid FROM think_member_grade WHERE mid = user_id;
+WHILE is_error = 1 DO
+## 查询不到信息就 结束循环
+    IF user_pid = 0 OR user_pid = ''THEN
+    SET is_error = 0;
+    ELSE
+    ## 多条件判断
+      CASE
+          WHEN user_grade = 1 THEN
+            ## 查询父级信息 及团队信息
+          SELECT mid,pid,one INTO user_mid,user_pid,user_team FROM think_member_grade WHERE mid = user_pid;
+          IF user_team = '' OR user_team = null THEN
+          UPDATE think_member_grade SET one = user_id WHERE mid = user_mid;
+          ELSE
+          UPDATE think_member_grade SET one = concat(one,',',user_id) WHERE mid = user_mid;
+          END IF;
+          WHEN user_grade = 2 THEN
+            ## 查询父级信息 及团队信息
+          SELECT mid,pid,two INTO user_mid,user_pid,user_team FROM think_member_grade WHERE mid = user_pid;
+          IF user_team = '' OR user_team = null THEN
+          UPDATE think_member_grade SET two = user_id WHERE mid = user_mid;
+          ELSE
+          UPDATE think_member_grade SET two = concat(two,',',user_id) WHERE mid = user_mid;
+          END IF;
+          WHEN user_grade = 3 THEN
+            ## 查询父级信息 及团队信息
+          SELECT mid,pid,three INTO user_mid,user_pid,user_team FROM think_member_grade WHERE mid = user_pid;
+          IF user_team = '' OR user_team = null THEN
+          UPDATE think_member_grade SET three = user_id WHERE mid = user_mid;
+          ELSE
+          UPDATE think_member_grade SET three = concat(three,',',user_id) WHERE mid = user_mid;
+          END IF;
+          WHEN user_grade = 4 THEN
+            ## 查询父级信息 及团队信息
+          SELECT mid,pid,four INTO user_mid,user_pid,user_team FROM think_member_grade WHERE mid = user_pid;
+          IF user_team = '' OR user_team = null THEN
+          UPDATE think_member_grade SET four = user_id WHERE mid = user_mid;
+          ELSE
+          UPDATE think_member_grade SET four = concat(four,',',user_id) WHERE mid = user_mid;
+          END IF;
+          WHEN user_grade = 5 THEN
+            ## 查询父级信息 及团队信息
+          SELECT mid,pid,five INTO user_mid,user_pid,user_team FROM think_member_grade WHERE mid = user_pid;
+          IF user_team = '' OR user_team = null THEN
+          UPDATE think_member_grade SET five = user_id WHERE mid = user_mid;
+          ELSE
+          UPDATE think_member_grade SET five = concat(five,',',user_id) WHERE mid = user_mid;
+          END IF;
+          WHEN user_grade = 6 THEN
+            ## 查询父级信息 及团队信息
+          SELECT mid,pid,six INTO user_mid,user_pid,user_team FROM think_member_grade WHERE mid = user_pid;
+          IF user_team = '' OR user_team = null THEN
+          UPDATE think_member_grade SET six = user_id WHERE mid = user_mid;
+          ELSE
+          UPDATE think_member_grade SET six = concat(six,',',user_id) WHERE mid = user_mid;
+          END IF;
+          WHEN user_grade = 7 THEN
+            ## 查询父级信息 及团队信息
+          SELECT mid,pid,seven INTO user_mid,user_pid,user_team FROM think_member_grade WHERE mid = user_pid;
+          IF user_team = '' OR user_team = null THEN
+          UPDATE think_member_grade SET seven = user_id WHERE mid = user_mid;
+          ELSE
+          UPDATE think_member_grade SET seven = concat(seven,',',user_id) WHERE mid = user_mid;
+          END IF;
+      END CASE ;
+    END IF;
+END WHILE;
+END;
