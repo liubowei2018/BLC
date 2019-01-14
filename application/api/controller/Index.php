@@ -42,7 +42,7 @@ class Index extends Base
         $result = $this->validate($data,'SafetyValidate.currency');//数据验证
         if($result !== true) return json(['code'=>1015,'msg'=>$result]);
         if(getSign($data) != $data['Sign']) return json(['code'=>1013,'msg'=>config('code.1013')]);//签名验证
-        //if(Cache::get($data['uuid'])['token'] != $data['token']) return json(['code'=>1004,'msg'=>config('code.1004')]);//登陆验证
+        if(Cache::get($data['uuid'])['token'] != $data['token']) return json(['code'=>1004,'msg'=>config('code.1004')]);//登陆验证
         $article = new ArticleModel();
         $news_list = $article->getNewsLists(4,$data['page'],15);
         return json(['code'=>1011,'msg'=>'获取成功','data'=>$news_list]);
@@ -68,13 +68,10 @@ class Index extends Base
      */
     public function user_img(){
         $data = input('post.');
-        $data['uuid'] = '11199180';
-        $data['token'] = '11199180';
-        $data['Sign'] = getSign($data);
         $result = $this->validate($data,'SafetyValidate.currency');//数据验证
         if($result !== true) return json(['code'=>1015,'msg'=>$result]);
         if(getSign($data) != $data['Sign']) return json(['code'=>1013,'msg'=>config('code.1013')]);//签名验证
-        //if(Cache::get($data['uuid'])['token'] != $data['token']) return json(['code'=>1004,'msg'=>config('code.1004')]);//登陆验证
+        if(Cache::get($data['uuid'])['token'] != $data['token']) return json(['code'=>1004,'msg'=>config('code.1004')]);//登陆验证
         $account = Db::name('member')->where('uuid',$data['uuid'])->value('account');
         $user_other = Db::name('member_other')->field('money_path,wallet,share_path')->where('uuid',$data['uuid'])->find();
         $user_other['money_path'] = GetDomainName().'/'.$user_other['money_path'];
@@ -98,13 +95,10 @@ class Index extends Base
      */
     public function recharge_config(){
         $data = input('post.');
-        $data['uuid'] = '11199180';
-        $data['token'] = '11199180';
-        $data['Sign'] = getSign($data);
         $result = $this->validate($data,'IndexValidate.index');//数据验证
         if($result !== true) return json(['code'=>1015,'msg'=>$result]);
         if(getSign($data) != $data['Sign']) return json(['code'=>1013,'msg'=>config('code.1013')]);//签名验证
-        //if(Cache::get($data['uuid'])['token'] != $data['token']) return json(['code'=>1004,'msg'=>config('code.1004')]);//登陆验证
+        if(Cache::get($data['uuid'])['token'] != $data['token']) return json(['code'=>1004,'msg'=>config('code.1004')]);//登陆验证
         $config = ConfigCapital();
         if($config){
             $jinbi = [

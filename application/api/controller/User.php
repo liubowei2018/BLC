@@ -146,9 +146,9 @@ class User extends Base
         $MemberModel = new MemberModel();
         $user_detail = $MemberModel->getUserDetail($data['uuid']);
         $UserAuth = new UserAuth();
-        $idcard_count = Db::name('member')->where('idcard',$data['idcard'])->count();
+        $idcard_count = Db::name('user_auth')->where(['idcard'=>$data['idcard'],'state'=>['<',3]])->count();
         if($idcard_count > 0){
-            return json(['code'=>1012,'msg'=>'该身份证号已认证','data'=>'']);
+            return json(['code'=>1012,'msg'=>'该身份证号已认证/或认证中','data'=>'']);
         }
         if($user_detail['is_proving'] == 1) {
             return json(['code'=>1012,'msg'=>'账号已实名认证','data'=>'']);

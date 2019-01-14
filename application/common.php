@@ -117,7 +117,7 @@ function sendMsg($mobile,$tplCode,$tplParam){
 //生成网址的二维码 返回图片地址
 function Qrcode($token, $url, $size = 8){
     vendor('phpqrcode.phpqrcode');
-    $md5 = md5($token);
+    $md5 = md5($token).rand(100000,999999);
     $dir = date('Ymd'). '/' . substr($md5, 0, 10) . '/';
     $patch = 'qrcode/' . $dir;
     if (!file_exists($patch)){
@@ -279,7 +279,6 @@ function getSign($arr)
     //http_build_query()中文自动转码需要处理下
     $str1 = http_build_query($arr);
     $str1 = urldecode($str1).'&key='.$key;
-    dump($str1);
     return  md5($str1);
 }
 //URL解码为中文

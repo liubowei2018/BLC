@@ -28,7 +28,7 @@ class Usermoney extends Base
         if($result !== true) return json(['code'=>1015,'msg'=>$result,'data'=>[]]);
         if(getSign($data) != $data['Sign']) return json(['code'=>1013,'msg'=>config('code.1013'),'data'=>[]]);//签名验证
         if(Cache::get($data['uuid'])['token'] != $data['token']) return json(['code'=>1004,'msg'=>config('code.1004')]);//登陆验证
-        $trade_count = Db::name('money_recharge')->where('trade',$data['trade'])->count();
+        $trade_count = Db::name('money_recharge')->where(['trade'=>$data['trade'],'state'=>['<',2]])->count();
         if($trade_count > 0){
             return json(['code'=>1012,'msg'=>'交易id已使用，请查询是否正确','data'=>'']);
         }

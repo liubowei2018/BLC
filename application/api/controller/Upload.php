@@ -18,7 +18,7 @@ class Upload extends Controller
     public function uploadface(){
         $file = request()->file('image');
         if($file){
-            $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads/user');
+           $info = $file->validate(['size'=>10485760,'ext'=>'jpg,png'])->move(ROOT_PATH . 'public' . DS . 'uploads/user');
             if($info){
                 $str= str_replace("\\",'/',$info->getSaveName());
                 return json(['code'=>1011,'msg'=>'上传成功','data'=>$str]);
