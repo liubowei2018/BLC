@@ -79,7 +79,9 @@ class Teamupgrade extends Controller
         }
         //满足的配置大于等于 配置人数
         if($is_level_num >= $config_grade['number']){
-            Db::name('member_grade')->where('mid',$userid)->update(['level'=>$level+1]);
+            $dengji = $level+1;
+            Db::name('member_grade')->where('mid',$userid)->update(['level'=>$dengji]);
+            Db::query("CALL TeamUpgrade($userid,$dengji)");
         }
     }
 

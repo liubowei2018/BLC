@@ -143,9 +143,12 @@ class Usermoney extends Base
         try{
             //用户第一次买入激活账户
             $user_info = $member->getUserDetail($data['uuid']);
+            $user_sum_money = 0;
             if($user_info['activation'] != 1 && $regular_number >= $ConfigCapital['active_member']){
                 Db::name('member')->where('uuid',$user_info['uuid'])->update(['activation'=>1]);
                 Db::query('CALL TeamNumber('.$user_info['id'].')');
+                //统计在 系统升级之后的所有订单
+                $user_sum_money = Db::name('money_log')->where(['uuid'=>$data['uuid'],'type'=>1,'state'=>1,'add_time'=>['>','1547519796']])->sum('money');
             }
             if($user_info['team_state'] != 1 && $regular_number >= $ConfigCapital['active_team']){
                 Db::name('member')->where('uuid',$user_info['uuid'])->update(['team_state'=>1]);
@@ -159,13 +162,14 @@ class Usermoney extends Base
                 // 添加增值记录
                 $MoneyModel->getModifyMoney($data['uuid'],5,1,$increment_number,'可用买入','',3);
             }
-            //直推分红
-            $this->direct_distribution($user_info['id'],$data['number']);
-            //增加团队业绩 和 今日业绩
-            Db::query('CALL TeamPerformance('.$user_info['id'].','.$data['number'].')');
-            //查询上级是否满足升级
-            $this->upgrade($user_info['id'],$user_info['uuid'],$data['number']);
-
+            if($user_info['activation'] == 1){
+                //直推分红
+                $this->direct_distribution($user_info['id'],$data['number']+$user_sum_money);
+                //增加团队业绩 和 今日业绩
+                Db::query('CALL TeamPerformance('.$user_info['id'].','.$data['number']+$user_sum_money.')');
+                //查询上级是否满足升级
+                $this->upgrade($user_info['id'],$user_info['uuid'],$data['number']);
+            }
             Db::commit();
             return json(['code'=>1011,'msg'=>'买入成功','data'=>[]]);
         }catch (\Exception $exception){
