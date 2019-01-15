@@ -32,38 +32,48 @@ class Teamupgrade extends Controller
         ## 如果满足当前升级条件
         switch ($data['level']){
             case 1:
-
+                $this->getSatisfyUpgrade($data['mid'],$data['one'],1);
                 break;
             case 2:
+                $this->getSatisfyUpgrade($data['mid'],$data['two'],2);
                 break;
             case 3:
+                $this->getSatisfyUpgrade($data['mid'],$data['three'],3);
                 break;
             case 4:
+                $this->getSatisfyUpgrade($data['mid'],$data['four'],4);
                 break;
             case 5:
+                $this->getSatisfyUpgrade($data['mid'],$data['five'],5);
                 break;
             case 6:
+                $this->getSatisfyUpgrade($data['mid'],$data['six'],6);
                 break;
             case 7:
+                $this->getSatisfyUpgrade($data['mid'],$data['seven'],7);
                 break;
         }
     }
 
     /**
      * 验证当前会员是否满足升级的条件
+     * @param $userid
      * @param $user_team_str
      * @param $level
      */
-    private function getSatisfyUpgrade($user_team_str,$level){
-        $is_level = 0;
+    private function getSatisfyUpgrade($userid,$user_team_str,$level){
+        $is_level_num = 0;
         $user_id_list = explode(',',$user_team_str);
         $config_grade = Db::name('config_grade')->where('level',$level)->find();
         foreach ($user_id_list as $k=>$v){
             $user_team_money = Db::name('member')->field('id,team_money')->where('id',$v)->find();
             $user_grade = Db::name('member_grade')->where('mid',$v)->find();
-            if($user_team_money['team_money'] >= $config_grade['money'] && $user_grade['']){
-
+            if($user_team_money['team_money'] >= $config_grade['money'] && $user_grade['level'] == $level){
+                $is_level_num = $is_level_num + 1;
             }
+        }
+        if($is_level_num >= $config_grade['number']){
+            Db::name('member_grade')->where('mid',$userid)->update(['level'=>$level+1]);
         }
     }
 
