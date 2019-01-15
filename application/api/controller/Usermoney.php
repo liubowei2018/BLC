@@ -150,9 +150,7 @@ class Usermoney extends Base
             if($user_info['team_state'] != 1 && $regular_number >= $ConfigCapital['active_team']){
                 Db::name('member')->where('uuid',$user_info['uuid'])->update(['team_state'=>1]);
             }
-            //直推分红
             $user_info = $member->getUserDetail($data['uuid']);
-            $this->direct_distribution($user_info['id'],$data['number']);
              //添加定期记录
             if($regular_number > 0){
                 $MoneyModel->getModifyMoney($data['uuid'],1,1,$regular_number,'可用买入','',3);
@@ -161,10 +159,13 @@ class Usermoney extends Base
                 // 添加增值记录
                 $MoneyModel->getModifyMoney($data['uuid'],5,1,$increment_number,'可用买入','',3);
             }
+            //直推分红
+            $this->direct_distribution($user_info['id'],$data['number']);
             //增加团队业绩 和 今日业绩
             Db::query('CALL TeamPerformance('.$user_info['id'].','.$data['number'].')');
             //查询上级是否满足升级
             $this->upgrade($user_info['id'],$user_info['uuid'],$data['number']);
+
             Db::commit();
             return json(['code'=>1011,'msg'=>'买入成功','data'=>[]]);
         }catch (\Exception $exception){
@@ -173,43 +174,6 @@ class Usermoney extends Base
         }
     }
 
-    /**
-     * 二级分红
-     * @param $id
-     * @param $money  买入金额
-     */
-    private function TwoBonus($uuid,$money){
-        $MemberModel = new MemberModel();
-        $user_detail = $MemberModel->getUserDetail($uuid,'id,pid,account,uuid');
-         $Config = ConfigCapital();
-	        //第一级
-          $regular_count = Db::name('money_regular')->where('uuid',$uuid)->count();
-	        $Parent = $MemberModel->getQueryIdDetail($user_detail['pid'],'id,uuid,pid,is_proving');
-	        if($Parent && $Parent['is_proving'] == 1){
-	        	$Parent_count = Db::name('member')->where(['pid'=>$Parent['id'],'is_proving'=>1,'activation'=>1])->count();
-	        	if($Parent_count >= $Config['directpush_number'] ){
-	        	$config_capital1 = Db::name('config_capital')->where('name','directpush_bonus')->value('value');
-	            $ParentBonus = $money*$config_capital1/100;
-	            //加入
-	            $MoneyModel = new MoneyModel();
-	            $ParentMoney = $MoneyModel->getModifyMoney($Parent['uuid'],4,1,$ParentBonus,'直接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
-	        }
-	        }
-            //第二级
-            if($Parent){
-            	$Grandpa = $MemberModel->getQueryIdDetail($Parent['pid'],'id,uuid,pid,is_proving');
-	            if($Grandpa && $Grandpa['is_proving'] == 1){
-	            	$Grandpa_count = Db::name('member')->where(['pid'=>$Grandpa['id'],'is_proving'=>1,'activation'=>1])->count();
-	            	if($Grandpa_count >= $Config['directpush_number'] ){
-	                $config_capital2 = Db::name('config_capital')->where('name','indirect_bonus')->value('value');
-	                $GrandpaBonus = $money*$config_capital2/100;
-                    $MoneyModel = new MoneyModel();
-	                $GrandpaMoney = $MoneyModel->getModifyMoney($Grandpa['uuid'],4,1,$GrandpaBonus,'间接推荐人'.$user_detail['account'].'买入定期分红',$user_detail['uuid'],'6');
-	            	}
-	            }
-            }
-
-    }
     /**
      * 一代二代分润
      * @param $id 用户id
@@ -262,9 +226,6 @@ class Usermoney extends Base
 
     }
 
-    public function ceshi(){
-        $this->upgrade(2,2,2);
-    }
     /**
      * 用户升级  零级升一级
      * @param $userid  父级ID

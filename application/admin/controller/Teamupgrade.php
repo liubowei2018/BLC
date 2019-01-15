@@ -52,6 +52,9 @@ class Teamupgrade extends Controller
             case 7:
                 $this->getSatisfyUpgrade($data['mid'],$data['seven'],7);
                 break;
+            case 8:
+                $this->getSatisfyUpgrade($data['mid'],$data['eight'],8);
+                break;
         }
     }
 
@@ -64,14 +67,17 @@ class Teamupgrade extends Controller
     private function getSatisfyUpgrade($userid,$user_team_str,$level){
         $is_level_num = 0;
         $user_id_list = explode(',',$user_team_str);
-        $config_grade = Db::name('config_grade')->where('level',$level)->find();
+        //查询升级条件  N+1
+        $config_grade = Db::name('config_grade')->where('level',$level+1)->find();
         foreach ($user_id_list as $k=>$v){
             $user_team_money = Db::name('member')->field('id,team_money')->where('id',$v)->find();
             $user_grade = Db::name('member_grade')->where('mid',$v)->find();
+            //升级条件  下级用户 团队业绩满足  当前等级等于 用户升级等级
             if($user_team_money['team_money'] >= $config_grade['money'] && $user_grade['level'] == $level){
                 $is_level_num = $is_level_num + 1;
             }
         }
+        //满足的配置大于等于 配置人数
         if($is_level_num >= $config_grade['number']){
             Db::name('member_grade')->where('mid',$userid)->update(['level'=>$level+1]);
         }
