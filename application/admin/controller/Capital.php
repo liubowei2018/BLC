@@ -8,6 +8,7 @@
 
 namespace app\admin\controller;
 use app\admin\model\ConfigCapital;
+use app\admin\model\ConfigUpgrade;
 use think\Cache;
 use think\Db;
 
@@ -83,4 +84,23 @@ class Capital extends Base
         Cache::rm('ConfigCapital');
         $this->success('保存成功！');
     }
+    //升级配置
+    public function config_upgrade(){
+        $ConfigUpgrade = new ConfigUpgrade();
+        $arr = $ConfigUpgrade->getConfigLost();
+        $this->assign('arr',$arr);
+        return $this->fetch();
+    }
+    public function save_upgrade(){
+        $param = input('post.');
+        $ConfigUpgrade = new ConfigUpgrade();
+        $res =  $ConfigUpgrade->getEditAll($param);
+        if($res){
+            $this->success('修改配置成功');
+        }else{
+            $this->error('修改配置失败');
+        }
+    }
+
+
 }
