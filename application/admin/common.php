@@ -102,3 +102,44 @@ function format_bytes($size, $delimiter = '') {
     }
     return $size . $delimiter . $units[$i];
 }
+
+/**
+ * 获得表格
+ * @param $array
+ * @throws PHPExcel_Exception
+ * @throws PHPExcel_Reader_Exception
+ * @throws PHPExcel_Writer_Exception
+ */
+function getExcelList($array){
+    //Excel测试
+    //$path = dirname(__FILE__); //找到当前脚本所在路径
+    \think\Loader::import('PHPExcel.Classes.PHPExcel');//手动引入PHPExcel.php
+    \think\Loader::import('PHPExcel.Classes.PHPExcel.IOFactory.PHPExcel_IOFactory');//引入IOFactory.php 文件里面的PHPExcel_IOFactory这个类
+    $PHPExcel = new \PHPExcel();//实例化
+    $PHPSheet = $PHPExcel->getActiveSheet();
+    $PHPSheet->setTitle("demo"); //给当前活动sheet设置名称
+    /*        $PHPSheet->setCellValue("A1","姓名")->setCellValue("B1","分数");//表格数据
+            $PHPSheet->setCellValue("A2","张三")->setCellValue("B2","2121");//表格数据*/
+    $PHPSheet->fromArray($array);
+    $PHPWriter = \PHPExcel_IOFactory::createWriter($PHPExcel,"Excel2007");//创建生成的格式
+    header('Content-Disposition: attachment;filename="表单数据.xlsx"');//下载下来的表格名
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    $PHPWriter->save("php://output"); //表示在$path路径下面生成demo.xlsx文件
+}
+
+/**
+ * 转换表格所需参数
+ * @param $strArray 行
+ * @param $array    列
+ * @return array
+ */
+function getExcelArray($strArray,$array){
+    $nbspArray = [];
+    $two_array = array();
+    $two_array[0] = $nbspArray;
+    $two_array[1] = $strArray;
+    foreach($array as $k=>$v){
+        $two_array[$k+2] = $v;
+    }
+    return $two_array;
+}

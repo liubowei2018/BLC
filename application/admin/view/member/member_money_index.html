@@ -49,21 +49,15 @@
                                 <option value="0">未激活</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <select name="activation" id="team_state" v-model="team_state"  class="form-control">
-                                <option value="">是否激活团队</option>
-                                <option value="1">已激活</option>
-                                <option value="0">未激活</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" onclick="laydate()"  class="form-control layer-date"  v-model="stare_time" placeholder="开始时间" />
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" onclick="laydate()"  class="form-control layer-date"  v-model="end_time" placeholder="结束时间" />
-                        </div>
+
                         <div class="col-md-1">
                             <a type="button" class="btn btn-primary" @click="search"><i class="fa fa-search"></i> 搜索</a>
+                        </div>
+                        <div class="col-md-1">
+                            <a type="button" class="btn btn-success" @click="export1">导出当前页</a>
+                        </div>
+                        <div class="col-md-1">
+                            <a type="button" class="btn btn-success" @click="export2">导出所有</a>
                         </div>
                     </div>
 
@@ -76,50 +70,23 @@
                 <div class="example" >
 
                     <el-table :data="tableData" border highlight-current-row v-loading="listLoading" element-loading-text="拼命加载中..." @selection-change="handleSelectionChange" style="width: 100%">
-                        <el-table-column prop="uuid" label="UUID" width="80"  show-overflow-tooltip align="center"></el-table-column>
                         <el-table-column prop="account" label="账号"  show-overflow-tooltip align="center"></el-table-column>
                         <el-table-column prop="nickname" label="姓名"  show-overflow-tooltip align="center"></el-table-column>
-                        <el-table-column prop="parent" label="推荐人"  show-overflow-tooltip align="center"></el-table-column>
-                        <el-table-column prop="status" label="账号状态"  align="center">
+                        <el-table-column prop="regular"   label="定期值" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="increment"   label="增值" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="current"   label="提速值" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="abc_coin"   label="可用" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="dongjie"   label="冻结" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="today_team_money"   label="今日团队业绩" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="frozen_push"   label="直接推荐奖金冻结" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="frozen_indirect"   label="间接推荐奖金冻结" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="freeze_team"   label="冻结日团队业绩" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column prop="freeze_yeji"   label="冻结总业绩" show-overflow-tooltip align="center"></el-table-column>
+                        <el-table-column align="center"  width="150" label="操作">
                             <template scope="scope">
-                                <span v-if="scope.row.status===0" style="color: #aa0c0d">冻结</span>
-                                <span v-else-if="scope.row.status==1" style="color: #18a689">正常</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="is_proving" label="实名认证"  align="center">
-                            <template scope="scope">
-                                <span v-if="scope.row.is_proving===0" >未认证</span>
-                                <span v-else-if="scope.row.is_proving==1" >已认证</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="activation" label="是否激活"  align="center">
-                            <template scope="scope">
-                                <span v-if="scope.row.activation===0" >未激活</span>
-                                <span v-else-if="scope.row.activation==1" >已激活</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="activation" label="激活团队"  align="center">
-                            <template scope="scope">
-                                <span v-if="scope.row.team_state===0" >未激活</span>
-                                <span v-else-if="scope.row.team_state==1" >已激活</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="team_money"   label="团队业绩" show-overflow-tooltip align="center"></el-table-column>
-                        <el-table-column prop="push_number"   label="直推人数" show-overflow-tooltip align="center"></el-table-column>
-                        <el-table-column prop="team_number"   label="团队人数" show-overflow-tooltip align="center"></el-table-column>
-                        <el-table-column prop="create_time"   label="注册时间" show-overflow-tooltip align="center"></el-table-column>
-                        <el-table-column align="center"  width="350" label="操作">
-                            <template scope="scope">
-                                <span v-if="scope.row.is_proving==1" > 
+                                <span v-if="scope.row.is_proving==1" >
                                     <el-button size="small" type="button" @click="money(scope.row)">资金管理</el-button>
-                                    <el-button size="small" type="button" @click="edit(scope.row)">编辑信息</el-button>
                                 </span>
-                                
-                                <el-button size="small" type="button" @click="reset(scope.row)">重置密码</el-button>
-                                <el-button size="small" type="button" @click="frozen(scope.row)">
-                                    <span v-if="scope.row.status===0" >开启账号</span>
-                                    <span v-else-if="scope.row.status==1" >冻结账号</span>
-                                </el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -159,9 +126,6 @@
             type:'',
             is_proving:'',
             activation:'',
-            team_state:'',
-            stare_time:'',
-            end_time:'',
             //默认每页数据量
             pageSize: 10,
             //当前页码
@@ -173,9 +137,9 @@
         },
         methods: {
             //从服务器读取数据
-            loadData(key,currentPage,pageSize,type,is_proving,activation,team_state,stare_time,end_time){
+            loadData(key,currentPage,pageSize,type,is_proving,activation){
                 vm.listLoading = true;
-                $.getJSON('{:url("member_list")}', {key:key,stare_time:stare_time,end_time:end_time,is_proving:is_proving,activation:activation,team_state:team_state,type:type,page:currentPage,rows:pageSize}, function(data){
+                $.getJSON('{:url("member_money_list")}', {key:key,is_proving:is_proving,activation:activation,type:type,page:currentPage,rows:pageSize}, function(data){
                     vm.tableData = [];
                     vm.totalCount = data.count;
                     for(var i=0;i<data.list.length;i++){
@@ -197,12 +161,12 @@
             //每页显示数据量变更
             handleSizeChange(val) {
                 this.pageSize = val;
-                this.loadData(this.key,this.currentPage, this.pageSize,this.type,this.is_proving,this.activation,this.team_state,this.stare_time,this.end_time);
+                this.loadData(this.key,this.currentPage, this.pageSize,this.type,this.is_proving,this.activation);
             },
             //页码变更
             handleCurrentChange(val) {
                 this.currentPage = val;
-                this.loadData(this.key,this.currentPage, this.pageSize,this.type,this.is_proving,this.activation,this.team_state,this.stare_time,this.end_time);
+                this.loadData(this.key,this.currentPage, this.pageSize,this.type,this.is_proving,this.activation);
             },
             //多选响应
             handleSelectionChange(val) {
@@ -210,8 +174,14 @@
             },
             //搜索
             search(){
-                this.loadData(this.key,this.currentPage, this.pageSize,this.type,this.is_proving,this.activation,this.team_state,this.stare_time,this.end_time);
+                this.loadData(this.key,this.currentPage, this.pageSize,this.type,this.is_proving,this.activation);
                 vm.listLoading = false;
+            },
+            export1(){
+                window.location.href="{:url('member/member_money_excel_list')}?key="+this.key+"&currentPage="+this.currentPage+"&pageSize="+this.pageSize+"&type="+this.type+"&is_proving="+this.is_proving+"&activation="+this.activation+"&excel_state=1";
+            },
+            export2(){
+                window.location.href="{:url('member/member_money_excel_list')}?key="+this.key+"&type="+this.type+"&is_proving="+this.is_proving+"&activation="+this.activation+"&excel_state=2";
             },
             //编辑资金
             money(row) {

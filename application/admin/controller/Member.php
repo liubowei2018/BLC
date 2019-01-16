@@ -109,9 +109,74 @@ class Member extends Base{
     }
 
     /**
+     * 会员资金列表
+     */
+    public function member_money_index(){
+
+        return $this->fetch();
+    }
+    /**
      * 会员列表
      */
     public function member_list(){
+        $key = input('key');
+        $state = input('param.state');
+        $type = input('param.type');
+        $is_proving = input('param.is_proving');
+        $activation = input('param.activation');
+        $team_state = input('param.team_state');
+        $stare_time = input('param.stare_time');
+        $end_time = input('param.end_time');
+        $map = [];
+        if($key&&$key!==""){
+            $map['m.account|m.nickname'] = $key;
+        }
+        if($is_proving === '0' || !empty($is_proving)){
+            $map['m.is_proving'] = $is_proving;
+        }
+        if($activation === '0' || !empty($activation)){
+            $map['m.activation'] = $activation;
+        }
+        if($team_state === '0' || !empty($team_state)){
+            $map['m.team_state'] = $team_state;
+        }
+        if($type === '0' || !empty($type)){
+            $map['m.status'] = $type;
+        }
+        if(!empty($stare_time)){
+            $stare_time = $stare_time.' 00:00:00';
+            $map['m.create_time'] = ['>= time',$stare_time];
+        }
+        if(!empty($end_time)){
+            $end_time = $end_time.' 23:59:59';
+            $map['m.create_time'] = ['<= time',$end_time];
+        }
+        if(!empty($stare_time) && !empty($end_time)){
+            $map['m.create_time'] = ['between time',[$stare_time,$end_time]];
+        }
+        $page = input('get.page') ? input('get.page'):1;
+        $rows = input('get.rows');// 获取总条数
+        $MemberLog = new MemberModel();
+        $info = $MemberLog->getMemberByWhere('m.*,y.current,y.abc_coin,y.today_team_money,y.increment,y.regular',$map,$page,$rows);
+        foreach ($info['lists'] as $k=>$v){
+            $MoneyPropose = new MoneyPropose();
+            $state2 = $MoneyPropose->getMemberCount($v['uuid']);
+            $info['lists'][$k]['dongjie'] = $state2['state_0'];
+            //推荐账号
+            $info['lists'][$k]['parent'] = $MemberLog->getMemberParent($v['pid']);
+            $info['lists'][$k]['push_number'] = Db::name('member')->where(['pid'=>$v['id'],'is_proving'=>1,'activation'=>1])->count();
+        }
+        $data['list'] = $info['lists'];
+        $data['count'] = $info['count'];
+        $data['page'] = $page;
+        return json($data);
+    }
+
+    /**
+     * 用户资金列表
+     * @return \think\response\Json
+     */
+    public function member_money_list(){
         $key = input('key');
         $state = input('param.state');
         $type = input('param.type');
@@ -146,18 +211,61 @@ class Member extends Base{
         $page = input('get.page') ? input('get.page'):1;
         $rows = input('get.rows');// 获取总条数
         $MemberLog = new MemberModel();
-        $info = $MemberLog->getMemberByWhere('m.*,y.current,y.abc_coin,y.today_team_money,y.increment,y.regular',$map,$page,$rows);
+        $info = $MemberLog->getMemberByWhere('y.*,m.nickname,m.account,m.is_proving',$map,$page,$rows);
         foreach ($info['lists'] as $k=>$v){
             $MoneyPropose = new MoneyPropose();
             $state2 = $MoneyPropose->getMemberCount($v['uuid']);
             $info['lists'][$k]['dongjie'] = $state2['state_0'];
-            //推荐账号
-            $info['lists'][$k]['parent'] = $MemberLog->getMemberParent($v['pid']);
         }
         $data['list'] = $info['lists'];
         $data['count'] = $info['count'];
         $data['page'] = $page;
         return json($data);
+    }
+    /**
+     * 用户资金列表 导出
+     * @return \think\response\Json
+     */
+    public function member_money_excel_list(){
+        $key = input('key');
+        $type = input('param.type');
+        $is_proving = input('param.is_proving');
+        $activation = input('param.activation');
+        $map = [];
+        if($key&&$key!==""){
+            $map['m.account|m.nickname'] = $key;
+        }
+        if($is_proving === '0' || !empty($is_proving)){
+            $map['m.is_proving'] = $is_proving;
+        }
+        if($activation === '0' || !empty($activation)){
+            $map['m.activation'] = $activation;
+        }
+        if($type === '0' || !empty($type)){
+            $map['m.status'] = $type;
+        }
+        $page = input('get.currentPage');
+        $rows = input('get.pageSize');// 获取总条数
+        $excel_state = input('get.excel_state');
+        $MemberLog = new MemberModel();
+        $info = $MemberLog->getMemberExcel('m.nickname,m.account,y.uuid,y.regular,y.increment,y.current,y.abc_coin,y.today_team_money,y.release_regular,y.frozen_push,y.frozen_indirect,y.freeze_team,y.freeze_yeji',$map,$page,$rows,$excel_state);
+        foreach ($info as $k=>$v){
+            $MoneyPropose = new MoneyPropose();
+            $state2 = $MoneyPropose->getMemberCount($v['uuid']);
+            $info[$k]['dongjie'] = $state2['state_0'];
+        }
+        $strArray = array('姓名','手机号','UUID','定期值','增值','提速值','可用值','今日业绩','今日释放','直接奖励冻结','间接奖励冻结','冻结团队奖励','冻结总业绩');
+        $excel_array = getExcelArray($strArray,$info);
+
+        getExcelList($excel_array);
+    }
+
+    public function ceshi(){
+        $where['nickname'] = ["like","%木%"];
+        dump($where);
+        Db::name('member')->where($where)->select();
+        echo  Db::name('member')->getlastsql();
+
     }
     /**
      * 添加会员

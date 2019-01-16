@@ -15,10 +15,22 @@ class MemberModel extends Model
     public function getMemberByWhere($field,$map, $Nowpage, $limits)
     {
         $count = $this->alias('m')->where($map)->join('money y','m.uuid=y.uuid')->count();
-        $lists = $this->alias('m')->field($field)->where($map)->join('money y','m.uuid=y.uuid')->page($Nowpage, $limits)->order('id desc')->select();
+        $lists = $this->alias('m')->field($field)->where($map)->join('money y','m.uuid=y.uuid')->page($Nowpage, $limits)->order('m.id desc')->select();
         return ['count'=>$count,'lists'=>$lists];
     }
+    /**
+     * 根据搜索条件获取用户列表信息
+     */
+    public function getMemberExcel($field,$map, $Nowpage, $limits,$excel_state)
+    {
+        if($excel_state == 1){
+            return  $this->alias('m')->field($field)->where($map)->join('money y','m.uuid=y.uuid')->page($Nowpage, $limits)->order('m.id desc')->select()->toArray();
 
+        }else{
+            return  $this->alias('m')->field($field)->where($map)->join('money y','m.uuid=y.uuid')->order('m.id desc')->select()->toArray();
+
+        }
+    }
     /**
      * 查询账号是否注册
      * @param $account

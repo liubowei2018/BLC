@@ -35,17 +35,17 @@ DECLARE CONTINUE HANDLER FOR NOT FOUND SET cursor_num=1;
 ## 定义事务
 DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET t_error=1;
 ## 最低定期配置
-SELECT value INTO user_min_release FROM think_config_capital WHERE name = ''min_release'';
+SELECT value INTO user_min_release FROM think_config_capital WHERE name = 'min_release';
 ## 提速配置
-SELECT value INTO user_static_bonus FROM think_config_capital WHERE name = ''static_bonus'';
+SELECT value INTO user_static_bonus FROM think_config_capital WHERE name = 'static_bonus';
 ## 今日业绩配置
-SELECT value INTO user_team_bonus FROM think_config_capital WHERE name = ''team_bonus'';
+SELECT value INTO user_team_bonus FROM think_config_capital WHERE name = 'team_bonus';
 ## 直推人数
-SELECT value INTO user_directpush_number FROM think_config_capital WHERE name = ''directpush_number'';
+SELECT value INTO user_directpush_number FROM think_config_capital WHERE name = 'directpush_number';
 ## 间接人数
-SELECT value INTO user_indirect_number FROM think_config_capital WHERE name = ''indirect_number'';
+SELECT value INTO user_indirect_number FROM think_config_capital WHERE name = 'indirect_number';
 ## 团队-直推人数
-SELECT value INTO user_team_direct_push FROM think_config_capital WHERE name = ''team_direct_push'';
+SELECT value INTO user_team_direct_push FROM think_config_capital WHERE name = 'team_direct_push';
 
 
 ## 开启游标
