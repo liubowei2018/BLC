@@ -1,4 +1,4 @@
-CREATE DEFINER=`root`@`localhost` PROCEDURE `TodaySettlement`() ## 异常定义顺序
+CREATE DEFINER=`root`@`localhost` PROCEDURE `TodaySettlement`()  ## 应注意 声明变量的顺序
 BEGIN
 ## 配置参数
 DECLARE user_directpush_number INT (11); ## 直推人数
@@ -24,19 +24,15 @@ DECLARE total_release_number numeric (12,2); ## 累计今日释放总数
 ## 用户状态
 DECLARE user_push_count INT(11);## 用户直推
 DECLARE user_team_state INT(11); ## 是否开启团队
-## 定义事务
 DECLARE t_error INTEGER DEFAULT 0;
-DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET t_error=1;
 ## 定义游标
 DECLARE cursor_num INT DEFAULT 0;
 ## 定义游标,会员账号  未冻结  已激活 进行释放积分
 DECLARE company_list CURSOR FOR SELECT  m.id,m.uuid,m.regular,m.increment,m.current,m.abc_coin,m.today_team_money,m.release_regular,m.frozen_push,m.frozen_indirect,m.freeze_team,m.freeze_yeji,u.team_state FROM think_money as m INNER JOIN think_member as u ON m.uuid = u.uuid WHERE u.status = 1 AND u.is_proving = 1 AND u.activation = 1 ;
 ## 声明当游标遍历完全部记录后将标志变量置成某个值
 DECLARE CONTINUE HANDLER FOR NOT FOUND SET cursor_num=1;
-##开启事务
-START TRANSACTION;
-## 更新配置信息
-
+## 定义事务
+DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET t_error=1;
 ## 最低定期配置
 SELECT min_release INTO user_min_release FROM think_config_capital WHERE name = 'min_release';
 ## 提速配置
@@ -49,6 +45,7 @@ SELECT directpush_number INTO user_directpush_number FROM think_config_capital W
 SELECT indirect_number INTO user_indirect_number FROM think_config_capital WHERE name = 'indirect_number';
 ## 团队-直推人数
 SELECT team_direct_push INTO user_team_direct_push FROM think_config_capital WHERE name = 'team_direct_push';
+
 
 ## 开启游标
 OPEN company_list;
@@ -82,6 +79,7 @@ FETCH company_list INTO user_id,user_uuid,user_regular,user_increment,user_curre
 ## 关闭游标
 CLOSE company_list;
 
+
 ## 验证事务
    IF t_error = 1 THEN
       ROLLBACK;
@@ -89,4 +87,7 @@ CLOSE company_list;
    ELSE
       COMMIT;
    END IF;
+
+
 END;
+
