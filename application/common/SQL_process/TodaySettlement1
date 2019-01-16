@@ -1,4 +1,4 @@
-CREATE DEFINER=`root`@`localhost` PROCEDURE `TodaySettlement`()  ## 应注意 声明变量的顺序
+CREATE DEFINER=`root`@`localhost` PROCEDURE `TodaySettlement1`()
 BEGIN
 ## 配置参数
 DECLARE user_directpush_number INT (11); ## 直推人数
@@ -25,6 +25,7 @@ DECLARE total_release_number numeric (12,2); ## 累计今日释放总数
 DECLARE user_push_count INT(11);## 用户直推
 DECLARE user_team_state INT(11); ## 是否开启团队
 DECLARE t_error INTEGER DEFAULT 0;
+DECLARE while_num INTEGER DEFAULT 0;
 ## 定义游标
 DECLARE cursor_num INT DEFAULT 0;
 ## 定义游标,会员账号  未冻结  已激活 进行释放积分
@@ -34,17 +35,17 @@ DECLARE CONTINUE HANDLER FOR NOT FOUND SET cursor_num=1;
 ## 定义事务
 DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET t_error=1;
 ## 最低定期配置
-SELECT min_release INTO user_min_release FROM think_config_capital WHERE name = 'min_release';
+SELECT value INTO user_min_release FROM think_config_capital WHERE name = ''min_release'';
 ## 提速配置
-SELECT static_bonus INTO user_static_bonus FROM think_config_capital WHERE name = 'static_bonus';
+SELECT value INTO user_static_bonus FROM think_config_capital WHERE name = ''static_bonus'';
 ## 今日业绩配置
-SELECT team_bonus INTO user_team_bonus FROM think_config_capital WHERE name = 'team_bonus';
+SELECT value INTO user_team_bonus FROM think_config_capital WHERE name = ''team_bonus'';
 ## 直推人数
-SELECT directpush_number INTO user_directpush_number FROM think_config_capital WHERE name = 'directpush_number';
+SELECT value INTO user_directpush_number FROM think_config_capital WHERE name = ''directpush_number'';
 ## 间接人数
-SELECT indirect_number INTO user_indirect_number FROM think_config_capital WHERE name = 'indirect_number';
+SELECT value INTO user_indirect_number FROM think_config_capital WHERE name = ''indirect_number'';
 ## 团队-直推人数
-SELECT team_direct_push INTO user_team_direct_push FROM think_config_capital WHERE name = 'team_direct_push';
+SELECT value INTO user_team_direct_push FROM think_config_capital WHERE name = ''team_direct_push'';
 
 
 ## 开启游标
@@ -52,29 +53,36 @@ OPEN company_list;
 FETCH company_list INTO user_id,user_uuid,user_regular,user_increment,user_current,user_abc_coin,user_today_team_money,user_release_regular,user_frozen_push,user_frozen_indirect,user_freeze_team,user_freeze_yeji,user_team_state;
     WHILE cursor_num <> 1 DO
     ## 首先验证 用户资金发否符合发放最低值
-        IF user_regular > min_release THEN
+        IF user_regular > user_min_release THEN
               SELECT count(*) INTO user_push_count FROM think_member WHERE pid = user_id AND is_proving = 1 AND activation = 1;
               SET total_release_number = 0;
             ## 已开启团队
             IF user_team_state = 1 AND user_push_count >= user_team_direct_push THEN
-              SET total_release_number = (user_freeze_yeji + user_today_team_money) / user_team_bonus;
+              SET total_release_number = (user_freeze_yeji + user_today_team_money) / user_team_bonus/100;
+              IF total_release_number > 0 THEN
               UPDATE think_money SET today_team_money = 0,freeze_team = 0 WHERE  uuid = user_uuid;
+              INSERT  INTO think_money_log (uuid,money,original,type,state,info,add_time,classify)values (user_uuid,(user_freeze_yeji + user_today_team_money) / user_team_bonus/100,0,4,1,''今日团队业绩奖励'',unix_timestamp(now()),8);
+              END IF;
             END IF;
             ## 是否发放间接
-            IF user_push_count >= user_indirect_number THEN
+            IF user_push_count >= user_indirect_number AND user_frozen_indirect > 0 THEN
               SET total_release_number = total_release_number + user_frozen_indirect ;
               UPDATE think_money SET frozen_indirect = 0 WHERE  uuid = user_uuid;
             END IF;
             ## 是否发放直接
-            IF user_push_count >= user_directpush_number THEN
+            IF user_push_count >= user_directpush_number AND user_frozen_push > 0 THEN
               SET total_release_number = total_release_number + user_frozen_push ;
               UPDATE think_money SET frozen_push = 0 WHERE  uuid = user_uuid;
             END IF;
             ## 计算提速值
-            SET total_release_number = total_release_number + (user_current*user_static_bonus);
+            IF user_current > 0 THEN
+              SET total_release_number = total_release_number + (user_current*user_static_bonus)/100;
+              INSERT  INTO think_money_log (uuid,money,original,type,state,info,add_time,classify)values (user_uuid,(user_current*user_static_bonus/100),0,4,1,''今日提速值奖励'',unix_timestamp(now()),7);
+            END IF;
             UPDATE think_money SET release_regular = release_regular + total_release_number WHERE uuid = user_uuid;
         END IF;
-    FETCH company_list INTO user_uuid,user_regular,user_increment,user_current,user_abc_coin,user_today_team_money,user_release_regular,user_frozen_push,user_frozen_indirect,user_freeze_team,user_freeze_yeji,user_team_state;
+         SET while_num = while_num + 1;
+    FETCH company_list INTO user_id,user_uuid,user_regular,user_increment,user_current,user_abc_coin,user_today_team_money,user_release_regular,user_frozen_push,user_frozen_indirect,user_freeze_team,user_freeze_yeji,user_team_state;
     END WHILE;
 ## 关闭游标
 CLOSE company_list;
@@ -88,6 +96,6 @@ CLOSE company_list;
       COMMIT;
    END IF;
 
-
+select while_num,t_error;
 END;
 
